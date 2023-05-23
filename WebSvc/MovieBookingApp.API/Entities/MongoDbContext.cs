@@ -12,22 +12,8 @@ namespace MovieBookingApp.API.Entities
             var client = new MongoClient(options.Value.ConnectionString);
             _database = client.GetDatabase(options.Value.DatabaseName);
         }
-        //public IMongoCollection<T> GetCollection<T>(string name)
-        //{
-        //    return _database.GetCollection<T>(name);
-        //}
-        public IMongoCollection<Movie> movies()
-        {
-            return _database.GetCollection<Movie>("movies");
-        }
-        public IMongoCollection<Users> users() 
-        {
-            return _database.GetCollection<Users>("users"); 
-        }
-        public IMongoCollection<Ticket> tickets() 
-        {
-            return _database.GetCollection<Ticket>("tickets"); 
-        }
-
+        public IMongoCollection<Movie> movies =>_database.GetCollection<Movie>("movies"); 
+        public IMongoCollection<Users> users => _database.GetCollection<Users>("users");
+        public IMongoCollection<Ticket> tickets => _database.GetCollection<Ticket>("tickets");
     }
 }

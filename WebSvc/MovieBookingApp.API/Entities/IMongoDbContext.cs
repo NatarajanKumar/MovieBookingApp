@@ -5,9 +5,8 @@ namespace MovieBookingApp.API.Entities
 {
     public interface IMongoDbContext
     {
-        //IMongoCollection<T> GetCollection<T>(string name);
-        public IMongoCollection<Movie> movies();
-        public IMongoCollection<Users> users();
-        public IMongoCollection<Ticket> tickets()
+        IMongoCollection<Movie> movies { get; }
+        IMongoCollection<Users> users { get; }
+        IMongoCollection<Ticket> tickets { get; }
     }
 }
