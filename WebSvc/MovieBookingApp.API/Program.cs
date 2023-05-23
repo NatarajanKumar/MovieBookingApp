@@ -1,6 +1,21 @@
+using Microsoft.Extensions.Configuration;
+using MovieBookingApp.API.Entities;
+using MovieBookingApp.API.Models;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.Configure<DBConfiguration>(builder.Configuration.GetSection("DBConfiguration"));
+builder.Services.AddSingleton<IMongoDbContext,MongoDbContext>();
+
+//builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
+//builder.Services.AddScoped<IProductRepository, ProductRepository>();
+//builder.Services.AddScoped<ICustomerService, CustomerService>();
+//builder.Services.AddScoped<IProductService, ProductService>();
+
+//configure JWT authentication
+var jwtSettings = builder.Configuration.GetSection("JwtSettings").Get<JwtSettings>();
+
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
