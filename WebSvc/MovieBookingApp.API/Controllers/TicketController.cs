@@ -2,8 +2,10 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using MongoDB.Bson;
 using MovieBookingApp.API.Models;
 using MovieBookingApp.API.Services.Contract;
+using System.Net.Sockets;
 
 namespace MovieBookingApp.API.Controllers
 {
@@ -25,7 +27,11 @@ namespace MovieBookingApp.API.Controllers
         [HttpGet("{ticketId}")]
         public async Task<ActionResult<Ticket>> GetTicketByName(string ticketId)
         {
-            var tickets = await _ticketService.GetTicketByUserId(ticketId);
+            if(!ObjectId.TryParse(ticketId,out var objectId))
+            {
+                return BadRequest();
+            }
+            var tickets = await _ticketService.GetTicketByUserId(objectId);
             if (tickets == null)
             {
                 return NotFound();
@@ -33,33 +39,40 @@ namespace MovieBookingApp.API.Controllers
             return Ok(tickets);
         }
         [HttpPost]
-        [Authorize(Policy = "Admin")]
+        //[Authorize(Policy = "Admin")]
         public async Task<ActionResult> AddTicket(Ticket ticket)
         {
-            await _ticketService.AddTicket(ticket);
-            return CreatedAtAction(nameof(GetTicketByName),
-                new
-                {
-                    ticketId = ticket.TicketID
-                }, ticket);
+            if(ModelState.IsValid)
+            {
+                await _ticketService.AddTicket(ticket);
+                return Ok();
+            }
+            else
+            {
+                return BadRequest();
+            }
         }
         [HttpPut("{ticketId}")]
-        [Authorize(Policy = "Admin")]
+        //[Authorize(Policy = "Admin")]
         public async Task<ActionResult> UpdateTicket(string ticketId, Ticket ticket)
         {
-            if (ticketId != ticket.TicketID)
+            if(!ObjectId.TryParse(ticketId, out var objectId) || objectId != ticket.TicketID)
             {
                 return BadRequest();
             }
             await _ticketService.UpdateTicket(ticket);
-            return NoContent();
+            return Ok();
         }
         [HttpDelete("{ticketId}")]
-        [Authorize(Policy = "Admin")]
+        //[Authorize(Policy = "Admin")]
         public async Task<ActionResult> DeleteTicket(string ticketId)
         {
-            await _ticketService.DeleteTicket(ticketId);
-            return NoContent();
+            if (!ObjectId.TryParse(ticketId, out var objectId))
+            {
+                return BadRequest();
+            }
+            await _ticketService.DeleteTicket(objectId);
+            return Ok();
         }
     }
 }
