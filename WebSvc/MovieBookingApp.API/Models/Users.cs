@@ -9,7 +9,7 @@ namespace MovieBookingApp.API.Models
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
         [BsonElement("UserID")]
-        public string UserID { get; set; }
+        public ObjectId UserID { get; set; }
         [Required]
         public string FirstName { get; set; }
         [Required]

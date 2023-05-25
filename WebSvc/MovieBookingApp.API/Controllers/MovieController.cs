@@ -22,10 +22,10 @@ namespace MovieBookingApp.API.Controllers
             var movies = await _movieService.GetAllMovies();
             return Ok(movies);
         }
-        [HttpGet("{movieName}/{theatreName}")]
-        public async Task<ActionResult<Movie>> GetMovieByName(string movieName, string thetrename)
+        [HttpGet("{movieName}")]
+        public async Task<ActionResult<Movie>> GetMovieByName(string movieName)
         {
-            var movie = await _movieService.GetMovieById(movieName, thetrename);
+            var movie = await _movieService.GetMovieById(movieName);
             if(movie == null)
             {
                 return NotFound();
@@ -33,34 +33,36 @@ namespace MovieBookingApp.API.Controllers
             return Ok(movie);
         }
         [HttpPost]
-        [Authorize(Policy ="Admin")]
+        //[Authorize(Policy ="Admin")]
         public async Task<ActionResult> AddMovie(Movie movies)
         {
-            await _movieService.AddMovie(movies);
-            return CreatedAtAction(nameof(GetMovieByName),
-                new
-                {
-                    movieName = movies.MovieName,
-                    thetreName = movies.TheatreName
-                },movies);
+            if(ModelState.IsValid)
+            {
+                await _movieService.AddMovie(movies);
+                return Ok();
+            }
+            else
+            {
+                return BadRequest();
+            }
         }
-        [HttpPut("{movieName}/{theatreName}")]
-        [Authorize(Policy = "Admin")]
-        public async Task<ActionResult> UpdateMovie(string movieName, string thetrename, Movie movies)
+        [HttpPut("{movieName}")]
+        //[Authorize(Policy = "Admin")]
+        public async Task<ActionResult> UpdateMovie(string movieName, Movie movies)
         {
-            if (movieName != movies.MovieName || thetrename != movies.TheatreName)
+            if (movieName != movies.MovieName)
             {
                 return BadRequest();
             }
             await _movieService.UpdateMovie(movies);
-            return NoContent();
+            return Ok();
         }
-        [HttpDelete("{movieName}/{theatreName}")]
-        [Authorize(Policy = "Admin")]
+        [HttpDelete]
+        //[Authorize(Policy = "Admin")]
         public async Task<ActionResult> DeleteMovie(string movieName, string thetrename)
         {
             await _movieService.DeleteMovie(movieName, thetrename);
-            return NoContent();
+            return Ok();
         }
     }
 }

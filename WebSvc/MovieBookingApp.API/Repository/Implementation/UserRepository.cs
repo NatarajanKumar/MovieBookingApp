@@ -28,7 +28,14 @@ namespace MovieBookingApp.API.Repository.Implementation
         public async Task UpdateUser(Users user)
         {
             var user_filter = Builders<Users>.Filter.Eq(u => u.LoginID, user.LoginID);
-            await _dbContext.users.ReplaceOneAsync(user_filter, user);
+            var update_user = Builders<Users>.Update
+                .Set(u => u.FirstName, user.FirstName)
+                .Set(u => u.LastName, user.LastName)
+                .Set(u => u.Email, user.Email)
+                .Set(u => u.Password, user.Password)
+                .Set(u => u.Confirmpassword, user.Confirmpassword)
+                .Set(u => u.ContactNumber, user.ContactNumber);
+            await _dbContext.users.UpdateOneAsync(user_filter, update_user);
         }
         public async Task DeleteUser(string userid)
         {

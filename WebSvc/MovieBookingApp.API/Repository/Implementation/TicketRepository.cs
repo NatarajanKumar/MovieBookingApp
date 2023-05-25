@@ -1,4 +1,5 @@
-﻿using MongoDB.Driver;
+﻿using MongoDB.Bson;
+using MongoDB.Driver;
 using MovieBookingApp.API.Entities;
 using MovieBookingApp.API.Models;
 using MovieBookingApp.API.Repository.Contract;
@@ -16,7 +17,7 @@ namespace MovieBookingApp.API.Repository.Implementation
         {
             return await _dbContext.tickets.Find(_ => true).ToListAsync();
         }
-        public async Task<Ticket> GetTicketByUserId(string Ticketid)
+        public async Task<Ticket> GetTicketByUserId(ObjectId Ticketid)
         {
             var ticket_filter = Builders<Ticket>.Filter.Eq(t => t.TicketID, Ticketid);
             return await _dbContext.tickets.Find(ticket_filter).FirstOrDefaultAsync();
@@ -28,9 +29,14 @@ namespace MovieBookingApp.API.Repository.Implementation
         public async Task UpdateTicket(Ticket ticket)
         {
             var ticket_filter = Builders<Ticket>.Filter.Eq(t => t.TicketID, ticket.TicketID);
-            await _dbContext.tickets.ReplaceOneAsync(ticket_filter, ticket);
+            var update_tiket = Builders<Ticket>.Update
+                .Set(u => u.MovieName, ticket.MovieName)
+                .Set(u => u.TheatreName, ticket.TheatreName)
+                .Set(u => u.NumberOfTickets, ticket.NumberOfTickets)
+                .Set(u => u.SeatNumber, ticket.SeatNumber);
+            await _dbContext.tickets.UpdateOneAsync(ticket_filter, update_tiket);
         }
-        public async Task DeleteTicket(string Ticketid)
+        public async Task DeleteTicket(ObjectId Ticketid)
         {
             var ticket_filter = Builders<Ticket>.Filter.Eq(t => t.TicketID, Ticketid);
             await _dbContext.tickets.DeleteOneAsync(ticket_filter);

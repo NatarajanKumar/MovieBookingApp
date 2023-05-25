@@ -7,8 +7,8 @@ using MovieBookingApp.API.Services.Contract;
 
 namespace MovieBookingApp.API.Controllers
 {
-    [ApiController]
     [Route("api/[controller]")]
+    [ApiController]
     public class UserController : ControllerBase
     {
         private readonly IUserService _userService;
@@ -17,7 +17,7 @@ namespace MovieBookingApp.API.Controllers
             _userService = userService;
         }
         [HttpGet]
-        [Authorize(Policy ="Admin")]
+        //[Authorize(Policy ="Admin")]
         public async Task<ActionResult<List<Users>>> GetAllUsers()
         {
             var all_Users = await _userService.GetAllUsers();
@@ -34,18 +34,21 @@ namespace MovieBookingApp.API.Controllers
             return Ok(all_Users);
         }
         [HttpPost]
-        [AllowAnonymous]
+        //[AllowAnonymous]
         public async Task<ActionResult> AddUser(Users user)
         {
-            await _userService.AddUser(user);
-            return CreatedAtAction(nameof(GetUserByLoginId),
-                new
-                {
-                    loginId = user.LoginID,
-                }, user);
+            if (ModelState.IsValid)
+            {
+                await _userService.AddUser(user);
+                return Ok();
+            }
+            else
+            {
+                return BadRequest();
+            }
         }
         [HttpPut("{loginId}")]
-        [Authorize(Policy = "User")]
+        //[Authorize(Policy = "User")]
         public async Task<ActionResult> UpdateUser(string loginId, Users user)
         {
             if (loginId != user.LoginID)
@@ -53,14 +56,14 @@ namespace MovieBookingApp.API.Controllers
                 return BadRequest();
             }
             await _userService.UpdateUser(user);
-            return NoContent();
+            return Ok();
         }
         [HttpDelete("{loginId}")]
-        [Authorize(Policy = "Admin")]
+        //[Authorize(Policy = "Admin")]
         public async Task<ActionResult> DeleteUser(string loginId)
         {
             await _userService.DeleteUser(loginId);
-            return NoContent();
+            return Ok();
         }
     }
 }
