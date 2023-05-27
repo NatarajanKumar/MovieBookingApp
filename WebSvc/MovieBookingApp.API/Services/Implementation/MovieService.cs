@@ -17,9 +17,9 @@ namespace MovieBookingApp.API.Services.Implementation
         {
             return await _movieRepository.GetAllMovies();
         }
-        public async Task<Movie> GetMovieById(string moviename, string thetrename)
+        public async Task<Movie> GetMovieById(string moviename)
         {
-            return await _movieRepository.GetMovieById(moviename, thetrename);
+            return await _movieRepository.GetMovieById(moviename);
         }
         public async Task AddMovie(Movie movies)
         {

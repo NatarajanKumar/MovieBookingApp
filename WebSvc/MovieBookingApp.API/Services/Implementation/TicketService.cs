@@ -1,4 +1,5 @@
-﻿using MongoDB.Driver;
+﻿using MongoDB.Bson;
+using MongoDB.Driver;
 using MovieBookingApp.API.Entities;
 using MovieBookingApp.API.Models;
 using MovieBookingApp.API.Repository.Contract;
@@ -17,7 +18,7 @@ namespace MovieBookingApp.API.Services.Implementation
         {
             return await _ticketRepository.GetAllTicket();
         }
-        public async Task<Ticket> GetTicketByUserId(string Ticketid)
+        public async Task<Ticket> GetTicketByUserId(ObjectId Ticketid)
         {
             return await _ticketRepository.GetTicketByUserId(Ticketid);
         }
@@ -29,7 +30,7 @@ namespace MovieBookingApp.API.Services.Implementation
         {
             await _ticketRepository.UpdateTicket(ticket);
         }
-        public async Task DeleteTicket(string Ticketid)
+        public async Task DeleteTicket(ObjectId Ticketid)
         {
             await _ticketRepository.DeleteTicket(Ticketid);
         }
